@@ -1,0 +1,8 @@
+                      LOAD s5, 60
+                      OUTPUT s5, 00
+                      SUB s5, 3F
+                      OUTPUT s5, 00
+                      SUB s5, 22
+                      JUMP nc, end
+                      OUTPUT s5, 00
+                 end:

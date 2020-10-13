@@ -1,0 +1,67 @@
+@NUTSHELL DECA
+by HactarCE
+
+0:  Blank
+1:  Head         {h}
+2:  Tail         {t}
+3:  Wire         {w}
+4:  Toggle 0     {t0}
+5:  Toggle 1     {t1}
+6:  Crossover    {x}
+
+
+@COLORS
+000: 0
+808: t
+445: w
+F00: t0
+FFF: h
+0F0: t1
+FF0: x
+
+
+@TABLE
+states: ?
+neighborhood: vonNeumann
+
+t_ = (t0, t1)
+ti = (t1, t0)
+wht = (w, h, t)
+
+symmetries: permute
+
+# Source
+w, x, 0 ~ 2, w; h
+
+# Toggle (head only)
+symmetries: rotate4reflect
+t_, x, any, h, any; [0: ti]
+symmetries: permute
+t_, x, any ~ 3; [0]
+
+# Toggle (head or tail)
+t_, (h, t), --(h, t, [0], x) ~ 3; [0: ti]
+
+symmetries: rotate4reflect
+
+# Crossover
+w, x, t0, any, 0; h
+x, h, E..W (w, t); h
+t, h, E..W w; x
+w, t0, x, t1, h; h
+
+# Crossover is a permanent diode
+w, h, t_, x, 0; w
+
+# Diode (block sideways)
+w, t0, h, wht, any; w
+w, t0, h, any, wht; w
+# Diode (block head-on)
+w, t1, (t, w), h, --h; w
+
+symmetries: permute
+
+# Basic transmission
+w, h, --h ~ 3; h
+h, any ~ 4; t
+t, any ~ 4; w

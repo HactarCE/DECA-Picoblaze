@@ -1,0 +1,1 @@
+Use [Opbasm](https://kevinpt.github.io/opbasm/) to generate `.mem` files (the return code doesn't matter), and then pass those into `make-rom.py` to get a Golly RLE. Pipe the output into `clipcopy` or similar to copy to clipboard.

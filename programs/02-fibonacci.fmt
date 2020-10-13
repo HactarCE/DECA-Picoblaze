@@ -1,0 +1,84 @@
+                      ; s0, s1 = smaller number or sum
+                      ; s2, s3 = bigger number
+                      ; s4, s5 = sum / scratch space for BCD
+                      ; sA, sB, sC = BCD
+
+
+                      LOAD s2, 01
+
+                loop:
+
+                      ;; compute next number (sum <-- small + big)
+
+                      LOAD s4, s0
+                      LOAD s5, s1
+                      ADD s4, s2
+                      ADDCY s5, s3
+
+                      ;; halt on overflow
+
+                      JUMP c, halt
+
+                      ;; rearrange numbers (small <-- big; big <-- sum)
+
+                      LOAD s0, s2
+                      LOAD s1, s3
+                      LOAD s2, s4
+                      LOAD s3, s5
+
+                      ;; compute BCD
+
+                      LOAD sa, 0
+                      LOAD sb, 0
+                      LOAD sc, 0
+
+        divide_10000:
+                      ; 10000'd = 0x2710
+                      ADD sc, 01
+                      SUB s4, 10
+                      SUBCY s5, 27
+                      JUMP nc, divide_10000
+                      SUB sc, 01
+                      ADD s4, 10
+                      ADDCY s5, 27
+
+         divide_1000:
+                      ; 1000'd = 0x03E8
+                      ADD sb, 10
+                      SUB s4, E8
+                      SUBCY s5, 03
+                      JUMP nc, divide_1000
+                      SUB sb, 10
+                      ADD s4, E8
+                      ADDCY s5, 03
+
+          divide_100:
+                      ADD sb, 01
+                      SUB s4, 100'd
+                      SUBCY s5, 00
+                      JUMP nc, divide_100
+                      SUB sb, 01
+                      ADD s4, 100'd
+                      ADDCY s5, 00
+
+           divide_10:
+                      ADD sa, 10
+                      SUB s4, 10'd
+                      JUMP nc, divide_10
+                      SUB sa, 10
+                      ADD s4, 10'd
+
+            divide_1:
+                      ADD sa, s4
+
+                      ;; output
+
+                      OUTPUT sa, 00
+                      OUTPUT sb, 01
+                      OUTPUT sc, 02
+
+                      JUMP loop
+
+                halt:
+
+                      JUMP halt
